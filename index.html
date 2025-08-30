@@ -30,10 +30,10 @@ input.form-control, select.form-select{border-radius:10px;border:1px solid #e6ee
 .value.bad{color:var(--bad)}
 .value.warn{color:var(--warn)}
 .table-card{margin-top:18px;padding:12px;background:var(--card);border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,0.04);transition:all 0.3s;}
-table{font-size:0.95rem;transition:all 0.3s;}
-thead th{background:#eef2ff;color:var(--accent);position:sticky;top:0;z-index:1;}
-.dark-mode thead th{background:#2e2e2e;color:#fff;}
-tbody tr:hover{background:rgba(79,70,229,0.1);}
+table{font-size:0.95rem;transition:all 0.3s;border-collapse:collapse;width:100%;}
+th, td{border:1px solid #4ade80;padding:8px;text-align:center;transition:all 0.2s;}
+thead th{background: linear-gradient(90deg, #16a34a, #a7f3d0); color:#fff; position:sticky; top:0; z-index:1;}
+tbody tr:hover{background-color: rgba(16,185,129,0.15); cursor:pointer;}
 .heat-good{background:rgba(16,185,129,0.15);}
 .heat-bad{background:rgba(239,68,68,0.15);}
 .heat-warn{background:rgba(249,115,22,0.15);}
@@ -120,7 +120,7 @@ tbody tr:hover{background:rgba(79,70,229,0.1);}
             <tr>
               <th>CPA</th>
               <th>عدد الأوردرات المتسلمة</th>
-              <th>تالتكلفة الفعلية لكل/أوردر</th>
+              <th>التكلفة الفعلية لكل/أوردر</th>
               <th>ربحك في الاوردر الواحد</th>
               <th>هامش %</th>
               <th>إجمالي تكلفة الإعلانات</th>
@@ -154,8 +154,7 @@ tbody tr:hover{background:rgba(79,70,229,0.1);}
     const range = t.match(/^(\\d+(?:\\.\\d+)?)-(\\d+(?:\\.\\d+)?):(\\d+(?:\\.\\d+)?)$/);
     if(range){
       const s=parseFloat(range[1]), e=parseFloat(range[2]), step=parseFloat(range[3]);
-      const arr=[];
-      for(let v=s; v<=e+1e-9; v+=step) arr.push(Math.round((v+Number.EPSILON)*100)/100);
+      const arr=[]; for(let v=s; v<=e+1e-9; v+=step) arr.push(Math.round((v+Number.EPSILON)*100)/100);
       return arr;
     }
     return t.split(',').map(v=>parseFloat(v.trim())).filter(v=>!isNaN(v));
@@ -168,7 +167,7 @@ tbody tr:hover{background:rgba(79,70,229,0.1);}
     const deliveredOrders = targetOrders * delivery;
     const returnedOrders = targetOrders - deliveredOrders;
 
-    const effectiveAdPerDelivered = cpa / delivery; // هنا التعديل: CPA الفعلية حسب نسبة التسليم
+    const effectiveAdPerDelivered = cpa / delivery; 
     const totalAds = effectiveAdPerDelivered * deliveredOrders;
     const totalShipping = deliveredOrders * shippingDelivered;
     const totalCOGS = deliveredOrders * cogs;
@@ -184,21 +183,10 @@ tbody tr:hover{background:rgba(79,70,229,0.1);}
     const ltvToCac = cac>0 ? ltv/cac : 0;
 
     return {
-      cpa:f(cpa),
-      deliveredOrders:f(deliveredOrders),
-      effectiveAdPerDelivered:f(effectiveAdPerDelivered),
-      profitPerDelivered:f(profitPerDelivered),
-      totalAds:f(totalAds),
-      totalShipping:f(totalShipping),
-      totalCOGS:f(totalCOGS),
-      totalReturnCost:f(totalReturnCost),
-      totalRevenueNet:f(totalRevenueNet),
-      netProfit:f(netProfit),
-      marginPct:f(marginPct),
-      roi:f(roi),
-      cac:f(cac),
-      ltv:f(ltv),
-      ltvToCac:f(ltvToCac)
+      cpa:f(cpa), deliveredOrders:f(deliveredOrders), effectiveAdPerDelivered:f(effectiveAdPerDelivered),
+      profitPerDelivered:f(profitPerDelivered), totalAds:f(totalAds), totalShipping:f(totalShipping),
+      totalCOGS:f(totalCOGS), totalReturnCost:f(totalReturnCost), totalRevenueNet:f(totalRevenueNet),
+      netProfit:f(netProfit), marginPct:f(marginPct), roi:f(roi), cac:f(cac), ltv:f(ltv), ltvToCac:f(ltvToCac)
     };
   }
 
@@ -304,25 +292,23 @@ tbody tr:hover{background:rgba(79,70,229,0.1);}
 
   async function exportPDF(){
     if(!window._last){ alert('اضغط احسب أولا'); return; }
-    const node=document.querySelector('.card-app');
-    const canvas=await html2canvas(node,{scale:2});
-    const imgData=canvas.toDataURL('image/png');
-    const { jsPDF } = window.jspdf;
-    const pdf=new jsPDF('p','mm','a4');
+    const {jsPDF} = window.jspdf;
+    const el=document.querySelector('.card-app');
+    const canvas = await html2canvas(el);
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF('p','pt','a4');
     const imgProps = pdf.getImageProperties(imgData);
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
     pdf.addImage(imgData,'PNG',0,0,pdfWidth,pdfHeight);
-    pdf.save('cpa_full_report.pdf');
+    pdf.save('cpa_dashboard.pdf');
   }
 
-  $('calcBtn').addEventListener('click', calcAndRender);
-  $('toggleMode').addEventListener('click', ()=>document.body.classList.toggle('dark-mode'));
-  $('exportCsv').addEventListener('click', exportCSV);
-  $('exportPdf').addEventListener('click', exportPDF);
-
+  $('calcBtn').addEventListener('click',calcAndRender);
+  $('exportCsv').addEventListener('click',exportCSV);
+  $('exportPdf').addEventListener('click',exportPDF);
+  $('toggleMode').addEventListener('click',()=>document.body.classList.toggle('dark-mode'));
 })();
 </script>
-
 </body>
 </html>

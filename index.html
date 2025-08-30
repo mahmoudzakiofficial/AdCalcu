@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>حاسبة ربح إعلاني — كاملة (CPA, ROI, CAC, LTV)</title>
+<title>حاسبة الاعلانات  (CPA, ROI, CAC, LTV)</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -47,8 +47,8 @@ tbody tr:hover{background:rgba(79,70,229,0.1);}
   <div class="card-app">
     <div class="d-flex justify-content-between align-items-start mb-3">
       <div>
-        <h1>📊 حاسبة ربح إعلاني — كاملة</h1>
-        <div class="muted">CPA, ROI, CAC, LTV, Break-even وتفصيل الأرباح — بدون رسم بياني. احفظ أو نزّل PDF/CSV.</div>
+        <h1>📊 E-Commerce Calculator </h1>
+        <div class="muted">أحسب بكل سهولة بأختيارات تحميل مرنة</div>
       </div>
       <div class="d-flex gap-2">
         <select id="currency" class="form-select" style="width:110px">
@@ -74,11 +74,11 @@ tbody tr:hover{background:rgba(79,70,229,0.1);}
         <input id="cogs" class="form-control" type="number" value="200">
       </div>
       <div class="col-md-3">
-        <label>🚚 شحن — مُسلّم</label>
+        <label>🚚 تكلفة الاوردر المتسلم</label>
         <input id="shippingDelivered" class="form-control" type="number" value="50">
       </div>
       <div class="col-md-3">
-        <label>🚚 شحن — أوردر مرتجع</label>
+        <label>🚚 تكلفة الاوردر المرتجع</label>
         <input id="shippingReturn" class="form-control" type="number" value="30">
       </div>
 
@@ -88,21 +88,21 @@ tbody tr:hover{background:rgba(79,70,229,0.1);}
       </div>
 
       <div class="col-md-3">
-        <label>🎯 تارجت أوردرات (Delivered)</label>
+        <label>🎯 عايز كام اوردر  (Delivered)</label>
         <input id="targetOrders" class="form-control" type="number" value="1000">
       </div>
       <div class="col-md-3">
-        <label>🔁 LTV — مرات شراء متوقعة</label>
+        <label>🔁 LTV — متوقع العميل يشتري كام مرة </label>
         <input id="ltvMultiplier" class="form-control" type="number" step="0.1" value="1.2">
       </div>
 
       <div class="col-md-9">
-        <label>📌 قائمة CPA (فواصل أو نطاق start-end:step)</label>
-        <input id="cpaInput" class="form-control" type="text" value="10,20,30,40,50,75,100">
+        <label>📌 حط الـ CPA (حط علام , بين كل رقم والتاني)</label>
+        <input id="cpaInput" class="form-control" type="text" value="10,20,30,40,50,75,100,130,150,180,200">
         <div class="small-muted mt-1">مثال: 10,20,30 أو 5-200:5</div>
       </div>
       <div class="col-md-3 d-flex align-items-end">
-        <button id="calcBtn" class="btn btn-primary w-100">⚡ احسب الآن</button>
+        <button id="calcBtn" class="btn btn-primary w-100">⚡ احسب دلوقتي</button>
       </div>
     </div>
 
@@ -112,7 +112,7 @@ tbody tr:hover{background:rgba(79,70,229,0.1);}
     <!-- table -->
     <div class="table-card mt-3">
       <div class="d-flex justify-content-between align-items-center mb-2">
-        <div><strong>📋 جدول النتائج</strong><div class="small-muted">تفصيل لكل CPA بحسب التارجت.</div></div>
+        <div><strong>📋 جدول النتائج</strong><div class="small-muted">هنحسبلك كل التكلفة حسب كل CPA ونسبة التسليمات كمان.</div></div>
       </div>
       <div class="table-responsive">
         <table class="table table-bordered table-sm" id="resultsTable">
@@ -120,8 +120,8 @@ tbody tr:hover{background:rgba(79,70,229,0.1);}
             <tr>
               <th>CPA</th>
               <th>عدد الأوردرات المتسلمة</th>
-              <th>تكلفة إعلان فعّالة/أوردر</th>
-              <th>الربح/أوردر</th>
+              <th>تالتكلفة الفعلية لكل/أوردر</th>
+              <th>ربحك في الاوردر الواحد</th>
               <th>هامش %</th>
               <th>إجمالي تكلفة الإعلانات</th>
               <th>إجمالي شحن</th>
@@ -140,7 +140,7 @@ tbody tr:hover{background:rgba(79,70,229,0.1);}
       </div>
     </div>
 
-    <div class="muted mt-3">ملاحظة: الحسابات تقريبية وتعتمد على الفرضيات المدخلة.</div>
+    <div class="muted mt-3">ملاحظة: الحسابات تقريبية وتعتمد على المدخلات اللي كتبتها فوق.</div>
 
   </div>
 </div>

@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>حاسبة ربح إعلاني — كاملة (CPA, ROI, CAC, LTV)</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root{
+  --bg:#f6f8fb; --card:#ffffff; --muted:#6b7280; --accent:#4f46e5;
+  --good:#10b981; --bad:#ef4444; --warn:#f97316; --purple:#8b5cf6; --orange:#f59e0b;
+}
+body{background:var(--bg);font-family:'Cairo',sans-serif;color:#0f1724;padding:24px;transition:all 0.3s;}
+.dark-mode{--bg:#121212;--card:#1e1e1e;--muted:#aaa;--accent:#8b5cf6;}
+.dark-mode body{background:var(--bg);color:#fff;}
+.card-app{background:var(--card);border-radius:14px;padding:20px;box-shadow:0 8px 30px rgba(2,6,23,0.06);transition:all 0.3s;}
+h1{font-size:20px;margin:0 0 6px;color:var(--accent)}
+.muted{color:var(--muted);font-size:0.95rem}
+label{font-weight:700;color:#0b1220}
+input.form-control, select.form-select{border-radius:10px;border:1px solid #e6eef8}
+.controls{gap:12px}
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:18px}
+.summary-card{background:linear-gradient(180deg,#fff,#fbfdff);padding:14px;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,0.04);border-left:6px solid #e6eef8;transition:all 0.3s;}
+.summary-card .title{font-weight:800;color:#0f1724;margin-bottom:6px}
+.summary-card .value{font-size:1.25rem;font-weight:900}
+.value.good{color:var(--good)}
+.value.bad{color:var(--bad)}
+.value.warn{color:var(--warn)}
+.table-card{margin-top:18px;padding:12px;background:var(--card);border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,0.04);transition:all 0.3s;}
+table{font-size:0.95rem;transition:all 0.3s;}
+thead th{background:#eef2ff;color:var(--accent);position:sticky;top:0;z-index:1;}
+.dark-mode thead th{background:#2e2e2e;color:#fff;}
+tbody tr:hover{background:rgba(79,70,229,0.1);}
+.heat-good{background:rgba(16,185,129,0.15);}
+.heat-bad{background:rgba(239,68,68,0.15);}
+.heat-warn{background:rgba(249,115,22,0.15);}
+.btn{border-radius:10px}
+.small-muted{font-size:0.88rem;color:var(--muted)}
+@media (max-width:768px){ .controls .col-md-3, .controls .col-md-4, .controls .col-md-9{flex:0 0 100%;max-width:100%} }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="card-app">
+    <div class="d-flex justify-content-between align-items-start mb-3">
+      <div>
+        <h1>📊 حاسبة ربح إعلاني — كاملة</h1>
+        <div class="muted">CPA, ROI, CAC, LTV, Break-even وتفصيل الأرباح — بدون رسم بياني. احفظ أو نزّل PDF/CSV.</div>
+      </div>
+      <div class="d-flex gap-2">
+        <select id="currency" class="form-select" style="width:110px">
+          <option value="EGP">EGP</option>
+          <option value="USD">USD</option>
+          <option value="EUR">EUR</option>
+          <option value="SAR">SAR</option>
+        </select>
+        <button id="toggleMode" class="btn btn-outline-secondary">🌓 Dark/Light</button>
+        <button id="exportCsv" class="btn btn-outline-secondary">⬇️ CSV</button>
+        <button id="exportPdf" class="btn btn-outline-secondary">⬇️ PDF</button>
+      </div>
+    </div>
+
+    <!-- inputs -->
+    <div class="row controls g-3">
+      <div class="col-md-3">
+        <label>💵 سعر البيع (AOV)</label>
+        <input id="price" class="form-control" type="number" value="400">
+      </div>
+      <div class="col-md-3">
+        <label>📦 تكلفة المنتج (COGS)</label>
+        <input id="cogs" class="form-control" type="number" value="200">
+      </div>
+      <div class="col-md-3">
+        <label>🚚 شحن — مُسلّم</label>
+        <input id="shippingDelivered" class="form-control" type="number" value="50">
+      </div>
+      <div class="col-md-3">
+        <label>🚚 شحن — أوردر مرتجع</label>
+        <input id="shippingReturn" class="form-control" type="number" value="30">
+      </div>
+
+      <div class="col-md-3">
+        <label>📈 نسبة التسليم (%)</label>
+        <input id="deliveryRate" class="form-control" type="number" value="70">
+      </div>
+
+      <div class="col-md-3">
+        <label>🎯 تارجت أوردرات (Delivered)</label>
+        <input id="targetOrders" class="form-control" type="number" value="1000">
+      </div>
+      <div class="col-md-3">
+        <label>🔁 LTV — مرات شراء متوقعة</label>
+        <input id="ltvMultiplier" class="form-control" type="number" step="0.1" value="1.2">
+      </div>
+
+      <div class="col-md-9">
+        <label>📌 قائمة CPA (فواصل أو نطاق start-end:step)</label>
+        <input id="cpaInput" class="form-control" type="text" value="10,20,30,40,50,75,100">
+        <div class="small-muted mt-1">مثال: 10,20,30 أو 5-200:5</div>
+      </div>
+      <div class="col-md-3 d-flex align-items-end">
+        <button id="calcBtn" class="btn btn-primary w-100">⚡ احسب الآن</button>
+      </div>
+    </div>
+
+    <!-- summary cards -->
+    <div class="summary-grid" id="summaryGrid" style="margin-top:18px"></div>
+
+    <!-- table -->
+    <div class="table-card mt-3">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <div><strong>📋 جدول النتائج</strong><div class="small-muted">تفصيل لكل CPA بحسب التارجت.</div></div>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-bordered table-sm" id="resultsTable">
+          <thead>
+            <tr>
+              <th>CPA</th>
+              <th>عدد الأوردرات المتسلمة</th>
+              <th>تكلفة إعلان فعّالة/أوردر</th>
+              <th>الربح/أوردر</th>
+              <th>هامش %</th>
+              <th>إجمالي تكلفة الإعلانات</th>
+              <th>إجمالي شحن</th>
+              <th>إجمالي تكلفة البضاعة</th>
+              <th>تكلفة الأوردرات المرتجعة</th>
+              <th>إجمالي الإيرادات الصافية</th>
+              <th>صافي الربح للتارجت</th>
+              <th>ROI %</th>
+              <th>CAC</th>
+              <th>LTV</th>
+              <th>LTV / CAC</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="muted mt-3">ملاحظة: الحسابات تقريبية وتعتمد على الفرضيات المدخلة.</div>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  function parseCPAInput(text){
+    const t = (text||'').trim();
+    if(!t) return [10,20,30];
+    const range = t.match(/^(\\d+(?:\\.\\d+)?)-(\\d+(?:\\.\\d+)?):(\\d+(?:\\.\\d+)?)$/);
+    if(range){
+      const s=parseFloat(range[1]), e=parseFloat(range[2]), step=parseFloat(range[3]);
+      const arr=[];
+      for(let v=s; v<=e+1e-9; v+=step) arr.push(Math.round((v+Number.EPSILON)*100)/100);
+      return arr;
+    }
+    return t.split(',').map(v=>parseFloat(v.trim())).filter(v=>!isNaN(v));
+  }
+  function f(n){ return Math.round((n+Number.EPSILON)*100)/100; }
+
+  function computeForCPA(params,cpa){
+    const {price,cogs,shippingDelivered,shippingReturn,deliveryRate,targetOrders,ltvMultiplier} = params;
+    const delivery = Math.max(0.0001, deliveryRate/100);
+    const deliveredOrders = targetOrders * delivery;
+    const returnedOrders = targetOrders - deliveredOrders;
+
+    const effectiveAdPerDelivered = cpa / delivery; // هنا التعديل: CPA الفعلية حسب نسبة التسليم
+    const totalAds = effectiveAdPerDelivered * deliveredOrders;
+    const totalShipping = deliveredOrders * shippingDelivered;
+    const totalCOGS = deliveredOrders * cogs;
+    const totalReturnCost = returnedOrders * shippingReturn;
+    const totalRevenueNet = deliveredOrders * price;
+    const profitPerDelivered = (price - cogs - shippingDelivered) - effectiveAdPerDelivered;
+    const netProfit = totalRevenueNet - totalCOGS - totalShipping - totalAds - totalReturnCost;
+
+    const marginPct = totalRevenueNet>0 ? (netProfit/totalRevenueNet*100) : 0;
+    const roi = totalAds>0 ? (netProfit/totalAds*100) : 0;
+    const cac = deliveredOrders>0 ? totalAds/deliveredOrders : 0;
+    const ltv = (price - cogs - shippingDelivered) * ltvMultiplier;
+    const ltvToCac = cac>0 ? ltv/cac : 0;
+
+    return {
+      cpa:f(cpa),
+      deliveredOrders:f(deliveredOrders),
+      effectiveAdPerDelivered:f(effectiveAdPerDelivered),
+      profitPerDelivered:f(profitPerDelivered),
+      totalAds:f(totalAds),
+      totalShipping:f(totalShipping),
+      totalCOGS:f(totalCOGS),
+      totalReturnCost:f(totalReturnCost),
+      totalRevenueNet:f(totalRevenueNet),
+      netProfit:f(netProfit),
+      marginPct:f(marginPct),
+      roi:f(roi),
+      cac:f(cac),
+      ltv:f(ltv),
+      ltvToCac:f(ltvToCac)
+    };
+  }
+
+  function findBreakEven(params){
+    for(let c=0; c<=2000; c+=0.5){
+      const res = computeForCPA(params, c);
+      if(Math.abs(res.netProfit) < 1) return f(c);
+    }
+    return 'غير محددة';
+  }
+
+  function calcAndRender(){
+    const currency = $('currency').value || 'EGP';
+    const params = {
+      price: parseFloat($('price').value)||0,
+      cogs: parseFloat($('cogs').value)||0,
+      shippingDelivered: parseFloat($('shippingDelivered').value)||0,
+      shippingReturn: parseFloat($('shippingReturn').value)||0,
+      deliveryRate: parseFloat($('deliveryRate').value)||100,
+      targetOrders: parseFloat($('targetOrders').value)||0,
+      ltvMultiplier: Math.max(0, parseFloat($('ltvMultiplier').value)||0)
+    };
+    const cpaList = parseCPAInput($('cpaInput').value);
+    const rows = cpaList.map(cpa => computeForCPA(params, cpa));
+
+    const best = rows.reduce((a,b)=> b.netProfit > a.netProfit ? b : a, rows[0] || null);
+    const breakEven = findBreakEven(params);
+
+    const sum = document.getElementById('summaryGrid');
+    sum.innerHTML = `
+      <div class="summary-card blue">
+        <div class="title">📊 متوسط الربح لكل أوردر</div>
+        <div class="value ${best && best.profitPerDelivered>=0 ? 'good' : 'bad'}">${best ? best.profitPerDelivered : '-' } ${currency}</div>
+        <div class="small-muted">متوسط على CPAs المدخلة</div>
+      </div>
+      <div class="summary-card green">
+        <div class="title">💰 إجمالي ربح التارجت</div>
+        <div class="value">${best ? best.netProfit : '-'} ${currency}</div>
+        <div class="small-muted">عند أفضل CPA</div>
+      </div>
+      <div class="summary-card green">
+        <div class="title">🏆 أفضل CPA</div>
+        <div class="value">${best ? best.cpa : '-'} ${currency}</div>
+        <div class="small-muted">CPA الذي يعطي أعلى صافي ربح</div>
+      </div>
+      <div class="summary-card blue">
+        <div class="title">⚖️ Break-even CPA</div>
+        <div class="value">${breakEven} ${currency}</div>
+        <div class="small-muted">تقريباً حيث صافي الربح ≈ 0</div>
+      </div>
+      <div class="summary-card purple">
+        <div class="title">📈 ROI (أفضل CPA)</div>
+        <div class="value">${best ? best.roi : '-'}%</div>
+        <div class="small-muted">Return on Investment</div>
+      </div>
+      <div class="summary-card orange">
+        <div class="title">🛑 تكلفة الأوردر المرتجع</div>
+        <div class="value">${f(params.shippingReturn)} ${currency}</div>
+        <div class="small-muted">تكلفة شحن المرتجع</div>
+      </div>
+    `;
+
+    const tbody = document.querySelector('#resultsTable tbody');
+    tbody.innerHTML = '';
+    rows.forEach(r=>{
+      const tr=document.createElement('tr');
+      let profitClass = 'good';
+      if(r.netProfit<0) profitClass='bad';
+      else if(Math.abs(r.netProfit)<r.totalRevenueNet*0.05) profitClass='warn';
+      tr.innerHTML=`
+        <td>${r.cpa}</td>
+        <td>${r.deliveredOrders}</td>
+        <td>${r.effectiveAdPerDelivered} ${currency}</td>
+        <td class="value ${r.profitPerDelivered>=0?'good':'bad'} heat-${r.profitPerDelivered>=0?'good':'bad'}">${r.profitPerDelivered} ${currency}</td>
+        <td>${r.marginPct}%</td>
+        <td>${r.totalAds} ${currency}</td>
+        <td>${r.totalShipping} ${currency}</td>
+        <td>${r.totalCOGS} ${currency}</td>
+        <td class="value ${r.totalReturnCost>0?'warn':''} heat-warn">${r.totalReturnCost} ${currency}</td>
+        <td>${r.totalRevenueNet} ${currency}</td>
+        <td class="value ${profitClass} heat-${profitClass}">${r.netProfit} ${currency}</td>
+        <td>${r.roi} %</td>
+        <td>${r.cac} ${currency}</td>
+        <td>${r.ltv} ${currency}</td>
+        <td>${r.ltvToCac}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    window._last={params,rows,currency};
+  }
+
+  function exportCSV(){
+    if(!window._last){ alert('اضغط احسب أولا'); return; }
+    const {rows,currency}=window._last;
+    const header=['CPA','DeliveredOrders','EffectiveAdPerDelivered','ProfitPerDelivered','MarginPct','TotalAds','TotalShipping','TotalCOGS','ReturnCost','TotalRevenueNet','NetProfit','ROI%','CAC','LTV','LTV/CAC'];
+    const lines=[header.join(',')].concat(rows.map(r=>[
+      r.cpa,r.deliveredOrders,r.effectiveAdPerDelivered,r.profitPerDelivered,r.marginPct,r.totalAds,r.totalShipping,r.totalCOGS,r.totalReturnCost,r.totalRevenueNet,r.netProfit,r.roi,r.cac,r.ltv,r.ltvToCac
+    ].join(',')));
+    const blob=new Blob([lines.join('\n')],{type:'text/csv'});
+    const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='cpa_full_report.csv'; a.click(); URL.revokeObjectURL(url);
+  }
+
+  async function exportPDF(){
+    if(!window._last){ alert('اضغط احسب أولا'); return; }
+    const node=document.querySelector('.card-app');
+    const canvas=await html2canvas(node,{scale:2});
+    const imgData=canvas.toDataURL('image/png');
+    const { jsPDF } = window.jspdf;
+    const pdf=new jsPDF('p','mm','a4');
+    const imgProps = pdf.getImageProperties(imgData);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+    pdf.addImage(imgData,'PNG',0,0,pdfWidth,pdfHeight);
+    pdf.save('cpa_full_report.pdf');
+  }
+
+  $('calcBtn').addEventListener('click', calcAndRender);
+  $('toggleMode').addEventListener('click', ()=>document.body.classList.toggle('dark-mode'));
+  $('exportCsv').addEventListener('click', exportCSV);
+  $('exportPdf').addEventListener('click', exportPDF);
+
+})();
+</script>
+
+</body>
+</html>

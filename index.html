@@ -10,35 +10,33 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 :root{
-  --bg:#f6f8fb; --card:#ffffff; --muted:#6b7280; --accent:#4f46e5;
+  --bg:#f6f8fb; --card:#ffffff; --text:#0f1724; --muted:#6b7280; --accent:#4f46e5;
   --good:#10b981; --bad:#ef4444; --warn:#f97316; --purple:#8b5cf6; --orange:#f59e0b;
 }
-body{background:var(--bg);font-family:'Cairo',sans-serif;color:#0f1724;padding:24px;transition:all 0.3s;}
-.dark-mode{--bg:#121212;--card:#1e1e1e;--muted:#aaa;--accent:#8b5cf6;}
-.dark-mode body{background:var(--bg);color:#fff;}
+.dark-mode{
+  --bg:#121212; --card:#1e1e1e; --text:#f5f5f5; --muted:#aaa; --accent:#8b5cf6;
+  --good:#22c55e; --bad:#f87171; --warn:#fb923c; --purple:#a78bfa; --orange:#fbbf24;
+}
+body{background:var(--bg);color:var(--text);font-family:'Cairo',sans-serif;padding:24px;transition:all 0.3s;}
 .card-app{background:var(--card);border-radius:14px;padding:20px;box-shadow:0 8px 30px rgba(2,6,23,0.06);transition:all 0.3s;}
-h1{font-size:20px;margin:0 0 6px;color:var(--accent)}
-.muted{color:var(--muted);font-size:0.95rem}
-label{font-weight:700;color:#0b1220}
-input.form-control, select.form-select{border-radius:10px;border:1px solid #e6eef8}
+h1{font-size:20px;margin:0 0 6px;color:var(--accent);}
+.muted{color:var(--muted);font-size:0.95rem;}
+label{font-weight:700;color:var(--text);}
+input.form-control, select.form-select{border-radius:10px;border:1px solid #e6eef8;background:var(--card);color:var(--text);}
 .controls{gap:12px}
 .summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:18px}
-.summary-card{background:linear-gradient(180deg,#fff,#fbfdff);padding:14px;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,0.04);border-left:6px solid #e6eef8;transition:all 0.3s;}
-.summary-card .title{font-weight:800;color:#0f1724;margin-bottom:6px}
+.summary-card{background:linear-gradient(180deg,var(--card),#f3f4f6);padding:14px;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,0.04);border-left:6px solid var(--accent);transition:all 0.3s;}
+.summary-card .title{font-weight:800;color:var(--text);margin-bottom:6px}
 .summary-card .value{font-size:1.25rem;font-weight:900}
 .value.good{color:var(--good)}
 .value.bad{color:var(--bad)}
 .value.warn{color:var(--warn)}
 .table-card{margin-top:18px;padding:12px;background:var(--card);border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,0.04);transition:all 0.3s;}
-table{font-size:0.95rem;transition:all 0.3s;border-collapse:collapse;width:100%;}
-th, td{border:1px solid #4ade80;padding:8px;text-align:center;transition:all 0.2s;}
-thead th{background: linear-gradient(90deg, #16a34a, #a7f3d0); color:#fff; position:sticky; top:0; z-index:1;}
-tbody tr:hover{background-color: rgba(16,185,129,0.15); cursor:pointer;}
-.heat-good{background:rgba(16,185,129,0.15);}
-.heat-bad{background:rgba(239,68,68,0.15);}
-.heat-warn{background:rgba(249,115,22,0.15);}
-.btn{border-radius:10px}
-.small-muted{font-size:0.88rem;color:var(--muted)}
+table{font-size:0.95rem;border-collapse:collapse;width:100%;transition:all 0.3s;}
+thead th{background:linear-gradient(90deg,#16a34a,#4ade80);color:#fff;position:sticky;top:0;z-index:1;padding:8px;border:1px solid #ccc;}
+tbody td{border:1px solid #ccc;padding:6px;text-align:center;color:var(--text);}
+tbody tr:hover{background:rgba(79,70,229,0.1);cursor:pointer;}
+.small-muted{font-size:0.88rem;color:var(--muted);}
 @media (max-width:768px){ .controls .col-md-3, .controls .col-md-4, .controls .col-md-9{flex:0 0 100%;max-width:100%} }
 </style>
 </head>
@@ -88,7 +86,7 @@ tbody tr:hover{background-color: rgba(16,185,129,0.15); cursor:pointer;}
       </div>
 
       <div class="col-md-3">
-        <label>🎯 عايز كام اوردر  (Delivered)</label>
+        <label>🎯 عايز كام اوردر </label>
         <input id="targetOrders" class="form-control" type="number" value="1000">
       </div>
       <div class="col-md-3">
@@ -120,7 +118,7 @@ tbody tr:hover{background-color: rgba(16,185,129,0.15); cursor:pointer;}
             <tr>
               <th>CPA</th>
               <th>عدد الأوردرات المتسلمة</th>
-              <th>التكلفة الفعلية لكل/أوردر</th>
+              <th>تالتكلفة الفعلية لكل/أوردر</th>
               <th>ربحك في الاوردر الواحد</th>
               <th>هامش %</th>
               <th>إجمالي تكلفة الإعلانات</th>
@@ -141,7 +139,6 @@ tbody tr:hover{background-color: rgba(16,185,129,0.15); cursor:pointer;}
     </div>
 
     <div class="muted mt-3">ملاحظة: الحسابات تقريبية وتعتمد على المدخلات اللي كتبتها فوق.</div>
-
   </div>
 </div>
 
@@ -154,8 +151,7 @@ tbody tr:hover{background-color: rgba(16,185,129,0.15); cursor:pointer;}
     const range = t.match(/^(\\d+(?:\\.\\d+)?)-(\\d+(?:\\.\\d+)?):(\\d+(?:\\.\\d+)?)$/);
     if(range){
       const s=parseFloat(range[1]), e=parseFloat(range[2]), step=parseFloat(range[3]);
-      const arr=[]; for(let v=s; v<=e+1e-9; v+=step) arr.push(Math.round((v+Number.EPSILON)*100)/100);
-      return arr;
+      const arr=[]; for(let v=s;v<=e+1e-9;v+=step) arr.push(Math.round((v+Number.EPSILON)*100)/100); return arr;
     }
     return t.split(',').map(v=>parseFloat(v.trim())).filter(v=>!isNaN(v));
   }
@@ -166,8 +162,7 @@ tbody tr:hover{background-color: rgba(16,185,129,0.15); cursor:pointer;}
     const delivery = Math.max(0.0001, deliveryRate/100);
     const deliveredOrders = targetOrders * delivery;
     const returnedOrders = targetOrders - deliveredOrders;
-
-    const effectiveAdPerDelivered = cpa / delivery; 
+    const effectiveAdPerDelivered = cpa / delivery;
     const totalAds = effectiveAdPerDelivered * deliveredOrders;
     const totalShipping = deliveredOrders * shippingDelivered;
     const totalCOGS = deliveredOrders * cogs;
@@ -175,27 +170,12 @@ tbody tr:hover{background-color: rgba(16,185,129,0.15); cursor:pointer;}
     const totalRevenueNet = deliveredOrders * price;
     const profitPerDelivered = (price - cogs - shippingDelivered) - effectiveAdPerDelivered;
     const netProfit = totalRevenueNet - totalCOGS - totalShipping - totalAds - totalReturnCost;
-
     const marginPct = totalRevenueNet>0 ? (netProfit/totalRevenueNet*100) : 0;
     const roi = totalAds>0 ? (netProfit/totalAds*100) : 0;
     const cac = deliveredOrders>0 ? totalAds/deliveredOrders : 0;
     const ltv = (price - cogs - shippingDelivered) * ltvMultiplier;
     const ltvToCac = cac>0 ? ltv/cac : 0;
-
-    return {
-      cpa:f(cpa), deliveredOrders:f(deliveredOrders), effectiveAdPerDelivered:f(effectiveAdPerDelivered),
-      profitPerDelivered:f(profitPerDelivered), totalAds:f(totalAds), totalShipping:f(totalShipping),
-      totalCOGS:f(totalCOGS), totalReturnCost:f(totalReturnCost), totalRevenueNet:f(totalRevenueNet),
-      netProfit:f(netProfit), marginPct:f(marginPct), roi:f(roi), cac:f(cac), ltv:f(ltv), ltvToCac:f(ltvToCac)
-    };
-  }
-
-  function findBreakEven(params){
-    for(let c=0; c<=2000; c+=0.5){
-      const res = computeForCPA(params, c);
-      if(Math.abs(res.netProfit) < 1) return f(c);
-    }
-    return 'غير محددة';
+    return {cpa:f(cpa),deliveredOrders:f(deliveredOrders),effectiveAdPerDelivered:f(effectiveAdPerDelivered),profitPerDelivered:f(profitPerDelivered),totalAds:f(totalAds),totalShipping:f(totalShipping),totalCOGS:f(totalCOGS),totalReturnCost:f(totalReturnCost),totalRevenueNet:f(totalRevenueNet),netProfit:f(netProfit),marginPct:f(marginPct),roi:f(roi),cac:f(cac),ltv:f(ltv),ltvToCac:f(ltvToCac)};
   }
 
   function calcAndRender(){
@@ -212,35 +192,32 @@ tbody tr:hover{background-color: rgba(16,185,129,0.15); cursor:pointer;}
     const cpaList = parseCPAInput($('cpaInput').value);
     const rows = cpaList.map(cpa => computeForCPA(params, cpa));
 
-    const best = rows.reduce((a,b)=> b.netProfit > a.netProfit ? b : a, rows[0] || null);
-    const breakEven = findBreakEven(params);
+    // متوسطات
+    const avgProfit = f(rows.reduce((a,b)=>a+b.profitPerDelivered,0)/rows.length);
+    const avgROI = f(rows.reduce((a,b)=>a+b.roi,0)/rows.length);
+    const avgCPA = f(rows.reduce((a,b)=>a+b.cpa,0)/rows.length);
 
     const sum = document.getElementById('summaryGrid');
     sum.innerHTML = `
       <div class="summary-card blue">
         <div class="title">📊 متوسط الربح لكل أوردر</div>
-        <div class="value ${best && best.profitPerDelivered>=0 ? 'good' : 'bad'}">${best ? best.profitPerDelivered : '-' } ${currency}</div>
+        <div class="value ${avgProfit>=0 ? 'good' : 'bad'}">${avgProfit} ${currency}</div>
         <div class="small-muted">متوسط على CPAs المدخلة</div>
       </div>
       <div class="summary-card green">
-        <div class="title">💰 إجمالي ربح التارجت</div>
-        <div class="value">${best ? best.netProfit : '-'} ${currency}</div>
-        <div class="small-muted">عند أفضل CPA</div>
+        <div class="title">💰 متوسط إجمالي ربح التارجت</div>
+        <div class="value">${f(rows.reduce((a,b)=>a+b.netProfit,0)/rows.length)} ${currency}</div>
+        <div class="small-muted">متوسط على CPAs</div>
       </div>
       <div class="summary-card green">
-        <div class="title">🏆 أفضل CPA</div>
-        <div class="value">${best ? best.cpa : '-'} ${currency}</div>
-        <div class="small-muted">CPA الذي يعطي أعلى صافي ربح</div>
-      </div>
-      <div class="summary-card blue">
-        <div class="title">⚖️ Break-even CPA</div>
-        <div class="value">${breakEven} ${currency}</div>
-        <div class="small-muted">تقريباً حيث صافي الربح ≈ 0</div>
+        <div class="title">🏆 متوسط CPA</div>
+        <div class="value">${avgCPA} ${currency}</div>
+        <div class="small-muted">متوسط على CPAs</div>
       </div>
       <div class="summary-card purple">
-        <div class="title">📈 ROI (أفضل CPA)</div>
-        <div class="value">${best ? best.roi : '-'}%</div>
-        <div class="small-muted">Return on Investment</div>
+        <div class="title">📈 متوسط ROI</div>
+        <div class="value">${avgROI} %</div>
+        <div class="small-muted">متوسط على CPAs</div>
       </div>
       <div class="summary-card orange">
         <div class="title">🛑 تكلفة الأوردر المرتجع</div>
@@ -260,14 +237,14 @@ tbody tr:hover{background-color: rgba(16,185,129,0.15); cursor:pointer;}
         <td>${r.cpa}</td>
         <td>${r.deliveredOrders}</td>
         <td>${r.effectiveAdPerDelivered} ${currency}</td>
-        <td class="value ${r.profitPerDelivered>=0?'good':'bad'} heat-${r.profitPerDelivered>=0?'good':'bad'}">${r.profitPerDelivered} ${currency}</td>
+        <td class="value ${r.profitPerDelivered>=0?'good':'bad'}">${r.profitPerDelivered} ${currency}</td>
         <td>${r.marginPct}%</td>
         <td>${r.totalAds} ${currency}</td>
         <td>${r.totalShipping} ${currency}</td>
         <td>${r.totalCOGS} ${currency}</td>
-        <td class="value ${r.totalReturnCost>0?'warn':''} heat-warn">${r.totalReturnCost} ${currency}</td>
+        <td class="value ${r.totalReturnCost>0?'warn':''}">${r.totalReturnCost} ${currency}</td>
         <td>${r.totalRevenueNet} ${currency}</td>
-        <td class="value ${profitClass} heat-${profitClass}">${r.netProfit} ${currency}</td>
+        <td class="value ${profitClass}">${r.netProfit} ${currency}</td>
         <td>${r.roi} %</td>
         <td>${r.cac} ${currency}</td>
         <td>${r.ltv} ${currency}</td>
@@ -275,7 +252,6 @@ tbody tr:hover{background-color: rgba(16,185,129,0.15); cursor:pointer;}
       `;
       tbody.appendChild(tr);
     });
-
     window._last={params,rows,currency};
   }
 
@@ -292,22 +268,24 @@ tbody tr:hover{background-color: rgba(16,185,129,0.15); cursor:pointer;}
 
   async function exportPDF(){
     if(!window._last){ alert('اضغط احسب أولا'); return; }
-    const {jsPDF} = window.jspdf;
-    const el=document.querySelector('.card-app');
-    const canvas = await html2canvas(el);
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF('p','pt','a4');
+    const node=document.querySelector('.card-app');
+    const canvas=await html2canvas(node,{scale:2});
+    const imgData=canvas.toDataURL('image/png');
+    const { jsPDF } = window.jspdf;
+    const pdf=new jsPDF('p','mm','a4');
     const imgProps = pdf.getImageProperties(imgData);
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
     pdf.addImage(imgData,'PNG',0,0,pdfWidth,pdfHeight);
-    pdf.save('cpa_dashboard.pdf');
+    pdf.save('report.pdf');
   }
 
   $('calcBtn').addEventListener('click',calcAndRender);
   $('exportCsv').addEventListener('click',exportCSV);
   $('exportPdf').addEventListener('click',exportPDF);
-  $('toggleMode').addEventListener('click',()=>document.body.classList.toggle('dark-mode'));
+  $('toggleMode').addEventListener('click',()=>{
+    document.body.classList.toggle('dark-mode');
+  });
 })();
 </script>
 </body>
